@@ -5,6 +5,7 @@ import resolve from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
 import scss from 'rollup-plugin-scss'
 import sass from 'sass'
+import pkg from './package.json'
 
 export default {
   input: 'src/index.js',
@@ -18,11 +19,16 @@ export default {
       file: 'dist/custom-components.esm.js'
     }
   ],
+  external: Object.keys(pkg.dependencies || {}).filter((dep) => !['bignumber.js'].includes(dep)),
   plugins: [
     vue(),
     resolve(),
     commonjs(),
-    babel({ babelHelpers: 'bundled' }),
+    babel({
+      babelHelpers: 'bundled',
+      exclude: 'node_modules/**',
+      presets: [['@babel/preset-env', { modules: false }]],
+    }),
     scss({
       // 指定 sass 编译器
       compiler: sass,
