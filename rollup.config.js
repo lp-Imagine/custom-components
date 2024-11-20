@@ -22,7 +22,11 @@ export default {
   external: ['vue', 'element-plus', '@element-plus/icons-vue'],
   plugins: [
     vue(),
-    resolve(),
+    resolve({
+      customResolveOptions: {
+        moduleDirectory: 'src'
+      }
+    }),
     commonjs(),
     babel({
       babelHelpers: 'bundled',
