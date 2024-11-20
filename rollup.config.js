@@ -3,8 +3,8 @@ import babel from '@rollup/plugin-babel'
 import commonjs from '@rollup/plugin-commonjs'
 import resolve from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
-import scss from 'rollup-plugin-scss'
-import sass from 'sass'
+import postcss from 'rollup-plugin-postcss'
+import autoprefixer from 'autoprefixer'
 import json from '@rollup/plugin-json' // 引入 json 插件
 
 export default {
@@ -19,13 +19,11 @@ export default {
       file: 'dist/custom-components.esm.js'
     }
   ],
-  external: ['vue', 'element-plus', '@element-plus/icons-vue'],
+  external: ['vue', 'bignumber.js', 'element-plus', '@element-plus/icons-vue',],
   plugins: [
     vue(),
     resolve({
-      customResolveOptions: {
-        moduleDirectory: 'src'
-      }
+      moduleDirectories: ['node_modules', 'src'],
     }),
     commonjs(),
     babel({
@@ -33,14 +31,15 @@ export default {
       exclude: 'node_modules/**',
       presets: [['@babel/preset-env', { modules: false }]],
     }),
-    scss({
-      // 指定 sass 编译器
-      compiler: sass,
-      // 输出 CSS 文件的路径
-      output: 'dist/bundle.css',
-      // 其他选项
-      includePaths: ['src/styles'],
-      sourceMap: true,
+    postcss({
+      extract: true,
+      minimize: true,
+      use: [
+        ['sass', { includePaths: ['src/styles'] }]
+      ],
+      extensions: ['.scss', '.css'],
+      plugins:[autoprefixer],
+      output: 'dist/custom-components.css'
     }),
     terser(),
     json(),

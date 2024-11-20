@@ -3,7 +3,7 @@
  * @Author: luopeng
  * @Date: 2024-11-19 15:31:29
  * @LastEditors: Do not edit
- * @LastEditTime: 2024-11-20 17:22:19
+ * @LastEditTime: 2024-11-20 21:27:38
 -->
 <template>
   <div class="lp-table" :style="{ '--alert-height': alertHeight }">
@@ -127,7 +127,7 @@
 </template>
 
 <script setup name="lp-table">
-import { ref, defineProps, defineEmits, defineComponent, computed } from "vue";
+import { ref, defineComponent, computed } from "vue";
 import { Delete, Edit, Plus } from "@element-plus/icons-vue";
 
 defineComponent({
