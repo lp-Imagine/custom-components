@@ -3,10 +3,10 @@
  * @Author: luopeng
  * @Date: 2024-11-19 15:31:29
  * @LastEditors: Do not edit
- * @LastEditTime: 2024-11-19 22:40:00
+ * @LastEditTime: 2024-11-20 09:41:12
 -->
 <template>
-  <div class="lp-table">
+  <div class="lp-table" :style="{ '--alert-height': alertHeight }">
     <!-- 操作栏 -->
     <div class="common-action">
       <div class="left">
@@ -127,7 +127,7 @@
 </template>
 
 <script setup name="lp-table">
-import { ref, defineProps, defineEmits, defineComponent } from "vue";
+import { ref, defineProps, defineEmits, defineComponent, computed } from "vue";
 import { Delete, Edit, Plus } from "@element-plus/icons-vue";
 
 defineComponent({
@@ -173,6 +173,16 @@ const props = defineProps({
 
 const selections = ref([]);
 
+// 计算 CSS 变量
+const alertHeight = computed(() => {
+  const sizes = {
+    large: '40px',
+    default: '32px',
+    small: '24px',
+  };
+  return sizes[props.config.size] || sizes.default;
+});
+
 const emit = defineEmits([
   "update-click",
   "delete-click",
@@ -203,7 +213,7 @@ defineExpose({ emitEvent });
 
     .right {
       .el-alert {
-        // height: 30px;
+        height: var(--alert-height)
       }
     }
   }

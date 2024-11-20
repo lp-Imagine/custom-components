@@ -5,8 +5,23 @@
 * Element Plus
 
 
-## 快速使用
+# 安装
 ```bash
 npm install @lp-imagine/custom-components
 ```
+
+# 快速使用
+
+## 组件说明
+### components
+```bash
+import { components } from '@lp-imagine/custom-components'
+```
+### utils
+```bash
+import { utils } from '@lp-imagine/custom-components'
+```
+    
+
+
 
