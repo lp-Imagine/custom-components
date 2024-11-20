@@ -3,7 +3,7 @@
  * @Author: luopeng
  * @Date: 2024-11-19 15:31:29
  * @LastEditors: Do not edit
- * @LastEditTime: 2024-11-20 09:41:12
+ * @LastEditTime: 2024-11-20 17:22:19
 -->
 <template>
   <div class="lp-table" :style="{ '--alert-height': alertHeight }">
@@ -203,7 +203,7 @@ const selectionChange = (val) => {
 defineExpose({ emitEvent });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .lp-table {
   .common-action {
     display: flex;

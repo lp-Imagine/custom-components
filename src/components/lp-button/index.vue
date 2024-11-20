@@ -3,7 +3,7 @@
  * @Author: luopeng
  * @Date: 2024-11-19 11:28:31
  * @LastEditors: Do not edit
- * @LastEditTime: 2024-11-20 09:45:03
+ * @LastEditTime: 2024-11-20 17:21:21
 -->
 <template>
   <el-button v-bind="$attrs" @click.stop="handleClick" :loading="loading">
@@ -24,4 +24,4 @@ const handleClick = () => {
   });
 };
 </script>
-<style scoped lang="scss"></style>;
+<style scoped lang="scss"></style>
