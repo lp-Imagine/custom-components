@@ -5,7 +5,7 @@ import resolve from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
 import scss from 'rollup-plugin-scss'
 import sass from 'sass'
-import pkg from './package.json'
+import json from '@rollup/plugin-json' // 引入 json 插件
 
 export default {
   input: 'src/index.js',
@@ -19,7 +19,7 @@ export default {
       file: 'dist/custom-components.esm.js'
     }
   ],
-  external: Object.keys(pkg.dependencies || {}).filter((dep) => !['bignumber.js'].includes(dep)),
+  external: ['vue', 'element-plus', '@element-plus/icons-vue'],
   plugins: [
     vue(),
     resolve(),
@@ -38,6 +38,7 @@ export default {
       includePaths: ['src/styles'],
       sourceMap: true,
     }),
-    terser()
+    terser(),
+    json(),
   ]
 }
