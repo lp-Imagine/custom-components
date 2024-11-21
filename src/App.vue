@@ -1,15 +1,6 @@
-<!--
- * @Description:  
- * @Author: luopeng
- * @Date: 2024-11-19 11:28:31
- * @LastEditors: Do not edit
- * @LastEditTime: 2024-11-19 22:40:46
--->
 <script setup>
-import LpTable from "./components/lp-table/index.vue";
-import LpButton from "./components/lp-button/index.vue";
-import { reactive, ref } from "vue";
-
+import { defineComponent, reactive, ref } from "vue";
+import { utils } from "../packages/index";
 const list = [
   {
     name: "John",
@@ -50,6 +41,7 @@ const column = [
 const data = reactive(list);
 const columns = ref(column);
 const loading = ref(false);
+const num = ref(0);
 
 const getData = () => {
   return new Promise((resolve, reject) => {
@@ -61,6 +53,7 @@ const getData = () => {
 
 const handleClick = (cb) => {
   loading.value = true;
+  num.value = utils.accAdd(num.value, 1);
   getData()
     .then((res) => {
       data.push(...res);
@@ -88,7 +81,7 @@ const selectionChange = (val) => {
       @selection-change="selectionChange"
     >
       <template #menuLeftBefore>
-         <LpButton type="primary" @click="handleClick">添加</LpButton>
+        <LpButton type="primary" @click="handleClick">添加{{ num }}</LpButton>
       </template>
     </LpTable>
   </div>

@@ -3,7 +3,7 @@
  * @Author: luopeng
  * @Date: 2024-11-19 11:28:31
  * @LastEditors: Do not edit
- * @LastEditTime: 2024-11-20 19:07:09
+ * @LastEditTime: 2024-11-21 14:27:10
 -->
 <template>
   <el-button v-bind="$attrs" @click.stop="handleClick" :loading="loading">
@@ -11,9 +11,11 @@
   </el-button>
 </template>
 
-<script setup name="lp-button">
+<script setup>
 import { ref } from "vue";
-
+defineOptions({
+  name: "LpButton"
+});
 const loading = ref(false);
 
 const emit = defineEmits(["click"]);
@@ -24,4 +26,5 @@ const handleClick = () => {
   });
 };
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+</style>

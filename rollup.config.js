@@ -8,7 +8,7 @@ import autoprefixer from 'autoprefixer'
 import json from '@rollup/plugin-json' // 引入 json 插件
 
 export default {
-  input: 'src/index.js',
+  input: 'packages/index.js',
   output: [
     {
       format: 'cjs',
@@ -35,7 +35,7 @@ export default {
       extract: true,
       minimize: true,
       use: [
-        ['sass', { includePaths: ['src/styles'] }]
+        ['sass', { includePaths: ['packages/styles'] }]
       ],
       extensions: ['.scss', '.css'],
       plugins:[autoprefixer],

@@ -3,7 +3,7 @@
  * @Author: luopeng
  * @Date: 2024-11-19 15:31:29
  * @LastEditors: Do not edit
- * @LastEditTime: 2024-11-20 21:27:38
+ * @LastEditTime: 2024-11-21 14:25:27
 -->
 <template>
   <div class="lp-table" :style="{ '--alert-height': alertHeight }">
@@ -126,10 +126,12 @@
   </div>
 </template>
 
-<script setup name="lp-table">
+<script setup>
 import { ref, defineComponent, computed } from "vue";
 import { Delete, Edit, Plus } from "@element-plus/icons-vue";
-
+defineOptions({
+  name: "LpTable"
+});
 defineComponent({
   components: {
     Delete,
@@ -203,7 +205,7 @@ const selectionChange = (val) => {
 defineExpose({ emitEvent });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .lp-table {
   .common-action {
     display: flex;

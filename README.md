@@ -7,7 +7,7 @@
 
 # 安装
 ```bash
-npm install @lp-imagine/custom-components
+npm install lp-custom-components
 ```
 
 # 快速使用
@@ -15,11 +15,20 @@ npm install @lp-imagine/custom-components
 ## 组件说明
 ### components
 ```bash
-import { components } from '@lp-imagine/custom-components'
+// 全局引入
+import LpCustomComponents from 'lp-custom-components'
+// 按需引入
+import { LpButton, LpTable } from 'lp-custom-components'
+// 引入样式
+import 'lp-custom-components/lib/style.css'
+
+Vue.use(LpCustomComponents)
+Vue.use(LpButton)
+Vue.use(LpTable)
 ```
 ### utils
 ```bash
-import { utils } from '@lp-imagine/custom-components'
+import { utils } from 'lp-custom-components'
 ```
     
 

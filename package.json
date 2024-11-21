@@ -1,17 +1,15 @@
 {
-  "name": "@lp-imagine/custom-components",
+  "name": "lp-custom-components",
   "private": false,
-  "version": "0.1.1",
+  "version": "0.1.4",
   "type": "module",
   "author": "lp-imagine",
   "description": "A Vue 3 component library with Element Plus",
-  "main": "dist/custom-components.cjs.js",
-  "module": "dist/custom-components.esm.js",
-  "style": "dist/custom-components.css",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
+  "main": "./dist/custom-components.umd.js",
+  "module": "./dist/custom-components.es.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
