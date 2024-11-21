@@ -1,8 +1,9 @@
 import LpButton from './components/lp-button/index.js';
 import LpTable from './components/lp-table/index.js';
+import LpTablePage from './components/lp-table-page/index.js';
 import * as utils from './utils/index.js';
 
-const components = [LpButton, LpTable];
+const components = [LpButton, LpTable, LpTablePage];
 const install = function (Vue) {
     if (install.installed) return;
     for (const component of components) {

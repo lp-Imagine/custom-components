@@ -3,7 +3,7 @@
  * @Author: luopeng
  * @Date: 2024-11-19 15:31:29
  * @LastEditors: Do not edit
- * @LastEditTime: 2024-11-21 14:25:27
+ * @LastEditTime: 2024-11-21 15:56:14
 -->
 <template>
   <div class="lp-table" :style="{ '--alert-height': alertHeight }">
@@ -49,7 +49,6 @@
     <el-table
       :data="data"
       v-bind="$attrs"
-      v-on="$attrs.on"
       :size="config.size"
       v-loading="loading"
       style="width: 100%"
@@ -123,20 +122,35 @@
         </template>
       </el-table-column>
     </el-table>
+    <LpTablePage
+      v-if="config.showPage"
+      :totalCount="totalCount"
+      :page-params="config.pageParams"
+      :size="config.size"
+      :background="config.background"
+      :layout="config.layout"
+      :pagerCount="config.pagerCount"
+      :page-sizes="config.pageSizes"
+      :pageKey="config.pageKey"
+      @change="(data) => emitEvent('page-change', data)"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, defineComponent, computed } from "vue";
 import { Delete, Edit, Plus } from "@element-plus/icons-vue";
+import LpTablePage from "../lp-table-page/index.vue";
+
 defineOptions({
-  name: "LpTable"
+  name: "LpTable",
 });
 defineComponent({
   components: {
     Delete,
     Edit,
     Plus,
+    LpTablePage,
   },
 });
 const props = defineProps({
@@ -151,6 +165,10 @@ const props = defineProps({
   columns: {
     type: Array,
     default: () => [],
+  },
+  totalCount: {
+    type: Number,
+    default: 0,
   },
   config: {
     type: Object,
@@ -168,6 +186,16 @@ const props = defineProps({
         showDelete: true,
         batchCheck: true,
         showIndex: true,
+        showPage: true,
+        pageParams: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+        pageSizes: [10, 30, 50, 100],
+        background: true,
+        layout: "total, sizes, prev, pager, next, jumper",
+        pagerCount: 7,
+        pageKey: { numKey: "pageNum", sizeKey: "pageSize" },
       };
     },
   },
@@ -178,9 +206,9 @@ const selections = ref([]);
 // 计算 CSS 变量
 const alertHeight = computed(() => {
   const sizes = {
-    large: '40px',
-    default: '32px',
-    small: '24px',
+    large: "40px",
+    default: "32px",
+    small: "24px",
   };
   return sizes[props.config.size] || sizes.default;
 });
@@ -191,6 +219,7 @@ const emit = defineEmits([
   "insert-click",
   "batch-delete-click",
   "selection-change",
+  "page-change",
 ]);
 // 暴露事件
 const emitEvent = (eventName, row) => {
@@ -215,7 +244,7 @@ defineExpose({ emitEvent });
 
     .right {
       .el-alert {
-        height: var(--alert-height)
+        height: var(--alert-height);
       }
     }
   }
