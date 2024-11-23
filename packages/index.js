@@ -1,9 +1,10 @@
 import LpButton from './components/lp-button/index.js';
 import LpTable from './components/lp-table/index.js';
 import LpTablePage from './components/lp-table-page/index.js';
+import LpRemoteSelect from './components/lp-remote-select/index.js';
 import * as utils from './utils/index.js';
 
-const components = [LpButton, LpTable, LpTablePage];
+const components = [LpButton, LpTable, LpTablePage, LpRemoteSelect];
 const install = function (Vue) {
     if (install.installed) return;
     for (const component of components) {
@@ -16,6 +17,6 @@ if (typeof window !== "undefined" && window.Vue) {
 }
 
 // 全局导出
-export { LpButton, LpTable, utils }
+export { utils, LpButton, LpTable, LpTablePage, LpRemoteSelect }
 // 默认导出
 export default { install, utils }

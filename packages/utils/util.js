@@ -236,3 +236,213 @@ export function numToThs(num = "") {
     return `${numArray[0].replace(/(\d)(?=(?:\d{3})+$)/g, "$1,")}${numArray[1] ? `.${numArray[1]}` : ""
         }`;
 }
+function isObject(obj) {
+    // 判断类型
+    return obj !== null && typeof obj === "object";
+}
+/**
+* @param {Object | Array} obj
+* @return {Object | Array}  
+* @description 递归实现深拷贝 (为了解决循环引用和相同引用、不同类型的深拷贝)
+*/
+export function deepClone(obj) {
+    let visitedObjs = [];
+    /**通过闭包维护一个变量，变量中储存已经遍历过的对象
+     *每次递归时判断当前的参数是否已经存在于变量中，如果已经存在，就说明已经递归过该变量，就可以停止这次递归并返回上次递归该变量时的返回值
+     */
+    function baseClone(target) {
+        if (!isObject(target)) return target;
+        for (let i = 0; i < visitedObjs.length; i++) {
+            if (visitedObjs[i].target === target) {
+                return visitedObjs[i].result;
+            }
+        }
+        let result = Array.isArray(target) ? [] : {};
+        visitedObjs.push({ target, result });
+        const keys = Object.keys(target);
+        for (let i = 0, len = keys.length; i < len; i++) {
+            result[keys[i]] = baseClone(target[keys[i]]);
+        }
+        return result;
+    }
+    return baseClone(obj);
+}
+/**
+ * @param {Array} arr
+ * @return {Array}
+ * @description 利用ES6 Set去重
+ */
+export function uniqueArr(arr) {
+    if (!Array.isArray(arr)) {
+        console.log('请传入数组')
+        return
+    }
+    return Array.from(new Set(arr))
+};
+
+/**
+ * @param {Array} arr
+ * @return {Array}
+ * @description 根据对象的属性不同去重
+ */
+export function repeatArr({ data, key }) {
+    if (!Array.isArray(data)) {
+        console.log('请传入数组')
+        return
+    }
+    let arr = [], obj = {}
+    data.forEach((item, index) => {
+        let attr = key ? item[key] : item
+        if (!obj[attr]) {
+            obj[attr] = index + 1
+            arr.push(item)
+        }
+    })
+    return arr
+};
+/**
+ * @param {Object} data
+ * @return {Object}
+ * @description 去除对象中为空的属性
+ */
+export function objHasValue(data) {
+    for (var key in data) {
+        if (data[key] === "" || data[key] === undefined) {
+            delete data[key];
+        }
+    }
+    return data;
+}
+/**
+ * @param {} 
+ * @return {String} uuid
+ * @description 前端生成 uuid
+ */
+export function getUuid() {
+    var d = new Date().getTime();
+    if (window.performance && typeof window.performance.now === "function") {
+        d += performance.now();  //use high-precision timer if available
+    }
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+    return uuid;
+}
+/**
+ * @param {String} img 图片地址url 
+ * @return {String} base64
+ * @description 图片地址转 base64
+ */
+export function getBase64(img) {
+    //传入图片路径，返回base64，使用getBase64(url).then(function(base64){},function(err){});
+    let getBase64Image = function (img, width, height) {
+        //width、height调用时传入具体像素值，控制大小,不传则默认图像大小
+        let canvas = document.createElement("canvas");
+        canvas.width = width ? width : img.width;
+        canvas.height = height ? height : img.height;
+        let ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        let dataURL = canvas.toDataURL();
+        return dataURL;
+    };
+    let image = new Image();
+    image.crossOrigin = "";
+    image.src = img;
+    let deferred = $.Deferred();
+    if (img) {
+        image.onload = function () {
+            deferred.resolve(getBase64Image(image));
+        };
+        return deferred.promise();
+    }
+};
+/**
+ * @param {String} strValue 
+ * @return {String} 汉字
+ * @description 提取汉字
+ */
+export function GetChinese(strValue) {
+    if (strValue !== null && strValue !== "") {
+        const reg = /[\u4e00-\u9fa5]/g;
+        return strValue.match(reg).join("");
+    }
+    return "";
+}
+/**
+* @param {String} strValue 
+* @return {String} 英文
+* @description 提取英文
+*/
+export function GetaZ(str) {
+    if (str !== null && str !== "") {
+        const reg = /[a-zA-Z]/g;
+        return str.match(reg).join("");
+    }
+    return "";
+}
+/**
+* @param {String} URL 
+* @return {Boolean} 
+* @description 检验url是否有效
+*/
+export function getUrlState(URL) {
+    var xmlhttp = new ActiveXObject("microsoft.xmlhttp");
+    xmlhttp.Open("GET", URL, false);
+    try {
+        xmlhttp.Send();
+    } catch (e) {
+    } finally {
+        var result = xmlhttp.responseText;
+        if (result) {
+            if (xmlhttp.Status == 200) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+}
+/**
+* @param {}  
+* @return {String}  name
+* @description 获取浏览器类型
+*/
+export function getBrowserType() {
+    let str = window.navigator.userAgent;
+    let name;
+    if (str.indexOf("Opera") > -1 || str.indexOf("OPR") > -1) {
+        name = "Opera";
+        return name;
+    }
+    if (str.indexOf("Edge") > -1) {
+        name = "Edge";
+        return name;
+    }
+    if (str.indexOf("Firefox") > -1) {
+        name = "Firefox";
+        return name;
+    }
+    if (str.indexOf("Chrome") > -1 && str.indexOf("Safari") > -1) {
+        name = "Chrome";
+        return name;
+    }
+    if (str.indexOf("Chrome") === -1 && str.indexOf("Safari") > -1) {
+        name = "Safari";
+        return name;
+    }
+    if (
+        (str.indexOf("Opera") === -1 && str.indexOf("MSIE") > -1) ||
+        str.indexOf("Trident") > -1
+    ) {
+        name = "IE";
+        return name;
+    }
+}
+
+
+
+
