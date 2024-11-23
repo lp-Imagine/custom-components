@@ -1,8 +1,15 @@
-# 工具类组件库（自己工作中用到的一些和封装的组件）
+# 工具类组件库（自己工作中用到的一些工具方法和封装的组件）
 ## 相关技术栈 
 * Vue3
 * Vite
 * Element Plus
+* scss
+
+## 组件列表
+* LpButton loading按钮
+* LpTable 表格
+* LpRemoteSelect 远程搜索下拉框
+* LpTablePage 分页器
 
 
 # 安装
