@@ -112,7 +112,7 @@ const handleClick = (cb: () => void) => {
   getData()
     .then((res) => {
       data.push(...res);
-      cb()
+      cb();
       loading.value = false;
     })
     .catch(() => {
@@ -142,13 +142,124 @@ onMounted(() => {
   getOptions("");
 });
 
-const selectChange = (val: any) => {
+const selectChange = (val: number[]) => {
   console.log("selectChange==", val);
+};
+
+const selectionChange = (val: any) => {
+  console.log("selectionChange==", val);
+};
+
+interface FormField {
+  label: string;
+  prop: string;
+  type: string;
+  props?: Record<string, any>;
+  style?: string;
+  options?: Array<{
+    label: string;
+    value: string | number;
+  }>;
+}
+
+interface FormData {
+  name: string;
+  age: string | number;
+  sex: string;
+}
+
+const fields = ref<FormField[]>([
+  {
+    label: "姓名",
+    prop: "name",
+    type: "el-input",
+    props: {
+      placeholder: "请输入姓名",
+    },
+  },
+  {
+    label: "年龄",
+    prop: "age",
+    type: "el-input-number", 
+    props: {
+      placeholder: "请输入年龄",
+    },
+  },
+  {
+    label: "性别",
+    prop: "sex",
+    type: "el-select",
+    style: "width: 100%",
+    props: {
+      placeholder: "请选择性别",
+    },
+    options: [
+      {
+        label: "男",
+        value: "男",
+      },
+      {
+        label: "女", 
+        value: "女",
+      },
+    ],
+  },
+]);
+
+const form = ref<FormData>({
+  name: "",
+  age: 0,
+  sex: "",
+});
+
+const getList = (): Promise<Person[]> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(list);
+    }, 100);
+  });
+};
+
+const handleSearch = (params: FormData, cb: () => void) => {
+  console.log("params==", params);
+
+  getList()
+    .then((res) => {
+      data.push(...res);
+    })
+    .finally(() => {
+      cb();
+    });
+};
+
+const handleReset = (params: FormData, cb: () => void) => {
+  console.log("handleReset");
+  form.value = {
+    name: "",
+    age: 0,
+    sex: "",
+  };
+  getList()
+    .then((res) => {
+    })
+    .finally(() => {
+      cb();
+    });
 };
 </script>
 
 <template>
   <div class="container">
+    <lp-search-form
+      label-width="80px"
+      size="default"
+      v-model="form"
+      :fields="fields"
+      @search-click="handleSearch"
+      @reset-click="handleReset"
+    ></lp-search-form>
+
+    <hr />
     <lp-remote-select
       no-data-text="暂无数据"
       multiple

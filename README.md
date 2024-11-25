@@ -11,6 +11,7 @@
 * LpTable 表格
 * LpRemoteSelect 远程搜索下拉框
 * LpTablePage 分页器
+* LpSearchForm 搜索表单
 
 
 # 安装
