@@ -3,7 +3,7 @@
  * @Author: luopeng
  * @Date: 2024-11-19 15:31:29
  * @LastEditors: Do not edit
- * @LastEditTime: 2024-11-21 15:56:14
+ * @LastEditTime: 2024-11-25 10:46:36
 -->
 <template>
   <div class="lp-table" :style="{ '--alert-height': alertHeight }">
@@ -137,14 +137,52 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, defineComponent, computed } from "vue";
 import { Delete, Edit, Plus } from "@element-plus/icons-vue";
-import LpTablePage from "../lp-table-page/index.vue";
+import LpTablePage from '../lp-table-page/index';
+
+interface TableColumn {
+  prop: string;
+  label?: string;
+  isSlot?: boolean;
+  [key: string]: any;
+}
+
+interface PageKey {
+  numKey: string;
+  sizeKey: string;
+}
+
+interface TableConfig {
+  size?: "large" | "default" | "small";
+  isText?: boolean;
+  showInsert?: boolean;
+  insertText?: string;
+  batchDelete?: boolean;
+  showOperate?: boolean;
+  operateWidth?: number;
+  operateAlign?: string;
+  showUpdate?: boolean;
+  showDelete?: boolean;
+  batchCheck?: boolean;
+  showIndex?: boolean;
+  showPage?: boolean;
+  pageParams?: {
+    pageNum: number;
+    pageSize: number;
+  };
+  pageSizes?: number[];
+  background?: boolean;
+  layout?: string;
+  pagerCount?: number;
+  pageKey?: PageKey;
+}
 
 defineOptions({
   name: "LpTable",
 });
+
 defineComponent({
   components: {
     Delete,
@@ -153,6 +191,7 @@ defineComponent({
     LpTablePage,
   },
 });
+
 const props = defineProps({
   loading: {
     type: Boolean,
@@ -163,7 +202,7 @@ const props = defineProps({
     default: () => [],
   },
   columns: {
-    type: Array,
+    type: Array as () => TableColumn[],
     default: () => [],
   },
   totalCount: {
@@ -171,7 +210,7 @@ const props = defineProps({
     default: 0,
   },
   config: {
-    type: Object,
+    type: Object as () => TableConfig,
     default: () => {
       return {
         size: "default",
@@ -201,32 +240,33 @@ const props = defineProps({
   },
 });
 
-const selections = ref([]);
+const selections = ref<any[]>([]);
 
 // 计算 CSS 变量
 const alertHeight = computed(() => {
-  const sizes = {
+  const sizes: Record<string, string> = {
     large: "40px",
     default: "32px",
     small: "24px",
   };
-  return sizes[props.config.size] || sizes.default;
+  return sizes[props.config.size || "default"] || sizes.default;
 });
 
-const emit = defineEmits([
-  "update-click",
-  "delete-click",
-  "insert-click",
-  "batch-delete-click",
-  "selection-change",
-  "page-change",
-]);
+const emit = defineEmits<{
+  (e: "update-click", row: any): void;
+  (e: "delete-click", row: any): void;
+  (e: "insert-click"): void;
+  (e: "batch-delete-click", selections: any[]): void;
+  (e: "selection-change", selections: any[]): void;
+  (e: "page-change", data: any): void;
+}>();
+
 // 暴露事件
-const emitEvent = (eventName, row) => {
-  emit(eventName, row);
+const emitEvent = (eventName: string, row?: any): void => {
+  emit(eventName as any, row);
 };
 
-const selectionChange = (val) => {
+const selectionChange = (val: any[]): void => {
   selections.value = val;
   emit("selection-change", val);
 };

@@ -11,14 +11,16 @@
   </el-button>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 defineOptions({
-  name: "LpButton"
+  name: "LpButton",
 });
-const loading = ref(false);
+const loading = ref<boolean>(false);
 
-const emit = defineEmits(["click"]);
+const emit = defineEmits<{
+  (e: "click", callback: () => void): void;
+}>();
 const handleClick = () => {
   loading.value = true;
   emit("click", () => {
@@ -26,5 +28,3 @@ const handleClick = () => {
   });
 };
 </script>
-<style scoped lang="scss">
-</style>

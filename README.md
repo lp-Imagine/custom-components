@@ -4,6 +4,7 @@
 * Vite
 * Element Plus
 * scss
+* typescript
 
 ## 组件列表
 * LpButton loading按钮

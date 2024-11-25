@@ -1,7 +1,7 @@
-import LpButton from './components/lp-button/index.js';
-import LpTable from './components/lp-table/index.js';
-import LpTablePage from './components/lp-table-page/index.js';
-import LpRemoteSelect from './components/lp-remote-select/index.js';
+import LpButton from './components/lp-button/index.ts';
+import LpTable from './components/lp-table/index.ts';
+import LpTablePage from './components/lp-table-page/index.ts';
+import LpRemoteSelect from './components/lp-remote-select/index.ts';
 import * as utils from './utils/index.js';
 
 const components = [LpButton, LpTable, LpTablePage, LpRemoteSelect];

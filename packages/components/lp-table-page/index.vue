@@ -3,7 +3,7 @@
  * @Author: luopeng
  * @Date: 2024-11-21 15:01:10
  * @LastEditors: Do not edit
- * @LastEditTime: 2024-11-21 15:47:10
+ * @LastEditTime: 2024-11-25 10:38:52
 -->
 <template>
   <div class="common-page__wrapper">
@@ -23,17 +23,29 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from "vue";
 
+interface PageKey {
+  numKey: string;
+  sizeKey: string;
+}
+
+interface PageParams {
+  pageNum: number;
+  pageSize: number;
+  [key: string]: number;
+}
+
 defineOptions({ name: "LpTablePage" });
+
 const props = defineProps({
   totalCount: {
     type: Number,
     default: 0,
   },
   pageParams: {
-    type: Object,
+    type: Object as () => PageParams,
     default: () => ({
       pageNum: 1,
       pageSize: 10,
@@ -48,7 +60,7 @@ const props = defineProps({
     default: true,
   },
   pageKey: {
-    type: Object,
+    type: Object as () => PageKey,
     default: () => {
       return { numKey: "pageNum", sizeKey: "pageSize" };
     },
@@ -62,12 +74,12 @@ const props = defineProps({
     default: 7,
   },
   pageSizes: {
-    type: Array,
+    type: Array as () => number[],
     default: () => [10, 30, 50, 100],
   },
 });
 
-const params = ref({
+const params = ref<PageParams>({
   pageNum: 1,
   pageSize: 10,
 });
@@ -81,18 +93,20 @@ watch(
   { deep: true, immediate: true }
 );
 
-const emit = defineEmits(["change"]);
-const handleSizeChange = (val) => {
+const emit = defineEmits<{
+  (e: "change", params: PageParams): void;
+}>();
+
+const handleSizeChange = (val: number): void => {
   params.value.pageNum = 1;
   params.value.pageSize = val;
   emit("change", params.value);
 };
 
-const handleCurrentChange = (val) => {
+const handleCurrentChange = (val: number): void => {
   params.value.pageNum = val;
   emit("change", params.value);
 };
-
 </script>
 
 <style scoped lang="scss">

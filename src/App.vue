@@ -1,7 +1,26 @@
-<script setup>
+<script setup lang="ts">
 import { defineComponent, onMounted, reactive, ref } from "vue";
 import { utils } from "../packages/index";
-const list = [
+
+interface Person {
+  name: string;
+  age: number;
+  address: string;
+}
+
+interface Column {
+  prop: string;
+  label: string;
+  minWidth: number;
+  fixed?: string;
+}
+
+interface Option {
+  label: string;
+  value: number;
+}
+
+const list: Person[] = [
   {
     name: "John",
     age: 18,
@@ -19,7 +38,7 @@ const list = [
   },
 ];
 
-const column = [
+const column: Column[] = [
   {
     prop: "name",
     label: "Name",
@@ -38,7 +57,7 @@ const column = [
   },
 ];
 
-const options = [
+const options: Option[] = [
   {
     label: "Option 1",
     value: 1,
@@ -53,7 +72,7 @@ const options = [
   },
 ];
 
-const options2 = [
+const options2: Option[] = [
   {
     label: "Option 4",
     value: 4,
@@ -68,47 +87,49 @@ const options2 = [
   },
 ];
 
-const data = reactive(list);
-const columns = ref(column);
-const loading = ref(false);
-const num = ref(0);
-const modelObj = ref({ value: 7, label: "Option 7" });
-const optionList = ref([]);
-const initList = ref([]);
+const data = reactive<Person[]>(list);
+const columns = ref<Column[]>(column);
+const loading = ref<boolean>(false);
+const num = ref<number>(0);
+const modelObj = ref<Option>({ value: 7, label: "Option 7" });
+const optionList = ref<Option[]>([]);
+const initList = ref<Option[]>([]);
 
-const valueList = ref([7,8]);
-const labelList = ref(["Option 7", "Option 8"]);
+const valueList = ref<number[]>([7, 8]);
+const labelList = ref<string[]>(["Option 7", "Option 8"]);
 
-const getData = () => {
-  return new Promise((resolve, reject) => {
+const getData = (): Promise<Person[]> => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       resolve(list);
     }, 100);
   });
 };
 
-const handleClick = (cb) => {
+const handleClick = (cb: () => void) => {
   loading.value = true;
   num.value = utils.accAdd(num.value, 1);
   getData()
     .then((res) => {
       data.push(...res);
+      cb()
+      loading.value = false;
     })
-    .finally(() => {
+    .catch(() => {
       cb();
       loading.value = false;
     });
 };
 
-const getData2 = () => {
-  return new Promise((resolve, reject) => {
+const getData2 = (): Promise<Option[]> => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       resolve(options2);
     }, 200);
   });
 };
 
-const getOptions = (query, cb) => {
+const getOptions = (query: string, cb?: () => void) => {
   return getData2().then((res) => {
     if (!query) initList.value = res;
     optionList.value = res.filter((item) => item.label.indexOf(query) > -1);
@@ -118,10 +139,10 @@ const getOptions = (query, cb) => {
 };
 
 onMounted(() => {
-  getOptions();
+  getOptions("");
 });
 
-const selectChange = (val) => {
+const selectChange = (val: any) => {
   console.log("selectChange==", val);
 };
 </script>
@@ -164,4 +185,3 @@ const selectChange = (val) => {
   background-color: #fff;
 }
 </style>
-

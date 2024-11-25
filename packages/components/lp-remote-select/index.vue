@@ -3,7 +3,7 @@
  * @Author: luopeng
  * @Date: 2024-11-19 11:28:31
  * @LastEditors: Do not edit
- * @LastEditTime: 2024-11-23 23:49:01
+ * @LastEditTime: 2024-11-25 10:58:06
 -->
 <template>
   <el-select
@@ -25,19 +25,33 @@
   </el-select>
 </template>
 
-<script setup>
+<script setup lang="ts">
 defineOptions({
   name: "LpRemoteSelect",
 });
-import { ref, watch, nextTick, onMounted, computed } from "vue";
+import { ref, watch, nextTick, onMounted, computed, PropType } from "vue";
 import { deepClone } from '../../utils/index'
-const emit = defineEmits(["update:modelValue", "fetch-query", "change"]);
+
+interface Option {
+  value: string | number;
+  label: string;
+  [key: string]: any;
+}
+
+const emit = defineEmits<{
+  (e: "update:modelValue", value: string | number | (string | number)[]): void;
+  (e: "fetch-query", query: string, callback: () => void): void;
+  (e: "change", value: Option | Option[]): void;
+}>();
+
 const props = defineProps({
   modelValue: {
-    type: [String, Number, Array],
+    type: [String, Number, Array] as PropType<string | number | (string | number)[]>,
+    default: undefined
   },
   label: {
-    type: [String, Array],
+    type: [String, Array] as PropType<string | string[]>,
+    default: undefined
   },
   multiple: {
     type: Boolean,
@@ -52,26 +66,26 @@ const props = defineProps({
     default: "label",
   },
   list: {
-    type: Array,
+    type: Array as PropType<Option[]>,
     default: () => [],
   },
   // 初始数据
   initList: {
-    type: Array,
+    type: Array as PropType<Option[]>,
     default: () => [],
   },
 });
 const loading = ref(false);
-const localValue = props.multiple ? ref([]) : ref("");
-const options = ref([]);
-const defaultList = ref([]);
+const localValue = ref<string | number | (string | number)[]>(props.multiple ? [] : "");
+const options = ref<Option[]>([]);
+const defaultList = ref<Option[]>([]);
 const useInit = ref(true);
 
 watch(
   () => props.modelValue,
   (newValue) => {
     nextTick(() => {
-      localValue.value = newValue;
+      localValue.value = newValue as string | number | (string | number)[];
     });
   },
   { deep: true }
@@ -84,6 +98,7 @@ watch(
   },
   { deep: true, immediate: true }
 );
+
 watch(
   () => props.initList,
   (newVal) => {
@@ -101,10 +116,10 @@ const computedOptions = computed(() => {
   if (!useInit.value) return options.value;
   if (props.multiple) {
     // 多选模式
-    let newList = [];
-    (props.modelValue || []).forEach((item, index) => {
+    let newList: Option[] = [];
+    ((props.modelValue || []) as (string | number)[]).forEach((item, index) => {
       const find = defaultList.value.find((el) => el[props.valueKey] === item);
-      if (!find) newList.push({ value: item, label: props.label[index] });
+      if (!find) newList.push({ value: item, label: (props.label as string[])[index] });
     });
     return [...newList, ...defaultList.value];
   }
@@ -115,9 +130,9 @@ const computedOptions = computed(() => {
   if (findIndex === -1 && props.modelValue) {
     // 该选项不在列表中，添加进去
     const newItem = {
-      [props.valueKey]: props.modelValue,
-      [props.labelKey]: props.label,
-    };
+      value: props.modelValue,
+      label: props.label as string,
+    } as Option;
     return [newItem, ...defaultList.value];
   }
   // 该选项在列表中，直接返回列表
@@ -127,28 +142,28 @@ const computedOptions = computed(() => {
 onMounted(() => {
   nextTick(() => {
     // 初始化数据
-    localValue.value = props.modelValue;
+    localValue.value = props.modelValue as string | number | (string | number)[];
   });
 });
 
-const handleChange = (val) => {
+const handleChange = (val: string | number | (string | number)[]) => {
   localValue.value = val;
   if (props.multiple) {
     // 多选
     const modelList = options.value.filter((item) =>
-      val.includes(item[props.valueKey])
+      (val as (string | number)[]).includes(item[props.valueKey])
     );
     emit("change", modelList);
   } else {
     const modelItem = options.value.find(
       (item) => item[props.valueKey] === val
     );
-    emit("change", modelItem);
+    emit("change", modelItem as Option);
   }
   emit("update:modelValue", val);
 };
 
-const fetchMethod = (query) => {
+const fetchMethod = (query: string) => {
   useInit.value = !query;
   if (!query) return;
   loading.value = true;

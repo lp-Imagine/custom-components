@@ -8,7 +8,7 @@ import autoprefixer from 'autoprefixer'
 import json from '@rollup/plugin-json' // 引入 json 插件
 
 export default {
-  input: 'packages/index.js',
+  input: 'packages/index.ts',
   output: [
     {
       format: 'cjs',
