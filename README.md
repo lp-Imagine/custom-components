@@ -34,7 +34,24 @@ import 'lp-custom-components/lib/style.css'
 Vue.use(LpCustomComponents)
 Vue.use(LpButton)
 Vue.use(LpTable)
-Vue.use(LpSvgIcon) // 创建src/assets/svgs目录下添加svg文件
+Vue.use(LpSvgIcon) 
+// 创建src/assets/svgs目录下添加svg文件
+// npm install vite-plugin-svg-icons -D
+// vite.config配置
+、、、js
+import path from 'path';
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
+export default defineConfig({
+  plugins: [
+    createSvgIconsPlugin({
+      // 指定需要缓存的svg图标文件夹
+      iconDirs: [path.resolve(__dirname, 'src/assets/svgs')],
+      // 指定symbolId格式
+      symbolId: 'icon-[dir]-[name]',
+    }),
+  ],
+});
+、、、
 ```
 ### utils
 ```bash
