@@ -37,6 +37,8 @@ Vue.use(LpTable)
 Vue.use(LpSvgIcon) 
 // 创建src/assets/svgs目录下添加svg文件
 // npm install vite-plugin-svg-icons -D
+// npm install fast-glob -D
+
 // vite.config配置
 、、、js
 import path from 'path';
@@ -52,6 +54,40 @@ export default defineConfig({
   ],
 });
 、、、
+
+// webpack配置
+npm install svg-sprite-loader fast-glob --save-dev
+// webpack.config.js
+```js
+const path = require('path');
+const glob = require('fast-glob');
+module.exports = {
+  // 其他配置...
+  module: {
+    rules: [
+      // 其他规则...
+      {
+        test: /\.svg$/,
+        use: [
+          {
+            loader: 'svg-sprite-loader',
+            options: {
+              symbolId: 'icon-[dir]-[name]',
+            },
+          },
+        ],
+        include: [path.resolve(__dirname, 'src/assets/svgs')],
+      },
+    ],
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+  },
+  // 其他配置...
+};
+```
 ```
 ### utils
 ```bash
