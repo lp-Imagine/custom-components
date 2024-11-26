@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import plugins from './plugins/index';
+
 // import { LpButton, LpTable } from '../packages/index'
 import LpCustomComponents from '../packages/index';
 

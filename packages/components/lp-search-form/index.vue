@@ -6,7 +6,7 @@
         <template v-for="item in fields" :key="item.prop">
           <el-col :xl="6" :lg="8" :md="12" :sm="24">
             <el-form-item :label="item.label" :prop="item.prop">
-              <slot v-if="$slots[item.prop]" :name="item.prop"></slot>
+              <slot v-if="$slots[item.prop]" :name="item.prop" :item="item"></slot>
               <template v-else>
                 <component
                   :is="item.type"
@@ -34,7 +34,7 @@
     <el-form :model="formData" :rules="rules" v-bind="$attrs">
       <template v-for="item in fields" :key="item.prop">
         <el-form-item :label="item.label" :prop="item.prop">
-          <slot v-if="$slots[item.prop]" :name="item.prop"></slot>
+          <slot v-if="$slots[item.prop]" :name="item.prop" :item="item"></slot>
           <template v-else>
             <component
               :is="item.type"
@@ -58,7 +58,7 @@
   </template>
 
   <!-- 操作按钮 -->
-  <div v-if="baseConfig.showSearchBtn">
+  <div class="lp-search-form__btn" v-if="baseConfig.showSearchBtn">
     <lp-button
       :size="$attrs.size || 'default'"
       type="primary"
@@ -120,7 +120,6 @@ const formData = defineModel<Record<string, any>>();
 const baseConfig = computed<Config>(() => {
   return {
     responsive: true,
-    inline: false,
     showSearchBtn: true,
     searchText: "查询",
     resetText: "重置",
@@ -140,5 +139,11 @@ const emitEvent = (eventName: EmitEvents, cb?: () => void) => {
 };
 </script>
 
-<style>
+<style scoped lang="scss">
+.lp-search-form {
+  &__btn {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
 </style>

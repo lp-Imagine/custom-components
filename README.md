@@ -27,13 +27,14 @@ npm install lp-custom-components
 // 全局引入
 import LpCustomComponents from 'lp-custom-components'
 // 按需引入
-import { LpButton, LpTable } from 'lp-custom-components'
+import { LpButton, LpTable, LpSvgIcon } from 'lp-custom-components'
 // 引入样式
 import 'lp-custom-components/lib/style.css'
 
 Vue.use(LpCustomComponents)
 Vue.use(LpButton)
 Vue.use(LpTable)
+Vue.use(LpSvgIcon) // 创建src/assets/svgs目录下添加svg文件
 ```
 ### utils
 ```bash

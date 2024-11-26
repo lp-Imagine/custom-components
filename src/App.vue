@@ -159,6 +159,14 @@ interface FormField {
   options?: Array<{
     label: string;
     value: string | number;
+    children?: Array<{
+      label: string;
+      value: string | number;
+      children?: Array<{
+        label: string;
+        value: string | number;
+      }>;
+    }>;
   }>;
 }
 
@@ -166,6 +174,7 @@ interface FormData {
   name: string;
   age: string | number;
   sex: string;
+  cascader: string;
 }
 
 const fields = ref<FormField[]>([
@@ -180,7 +189,7 @@ const fields = ref<FormField[]>([
   {
     label: "年龄",
     prop: "age",
-    type: "el-input-number", 
+    type: "el-input-number",
     props: {
       placeholder: "请输入年龄",
     },
@@ -199,8 +208,49 @@ const fields = ref<FormField[]>([
         value: "男",
       },
       {
-        label: "女", 
+        label: "女",
         value: "女",
+      },
+    ],
+  },
+  {
+    label: "级联选择框",
+    prop: "cascader",
+    type: "el-cascader",
+    style: "width: 100%",
+    props: {
+      placeholder: "请选择",
+      value: "value",
+      label: "label",
+    },
+    options: [
+      {
+        value: "zhinan",
+        label: "指南",
+        children: [
+          {
+            value: "shejiyuanze",
+            label: "设计原则",
+            children: [
+              {
+                value: "yizhi",
+                label: "一致",
+              },
+              {
+                value: "fankui",
+                label: "反馈",
+              },
+              {
+                value: "xiaolv",
+                label: "效率",
+              },
+              {
+                value: "kekong",
+                label: "可控",
+              },
+            ],
+          },
+        ],
       },
     ],
   },
@@ -210,6 +260,7 @@ const form = ref<FormData>({
   name: "",
   age: 0,
   sex: "",
+  cascader: "",
 });
 
 const getList = (): Promise<Person[]> => {
@@ -240,8 +291,7 @@ const handleReset = (params: FormData, cb: () => void) => {
     sex: "",
   };
   getList()
-    .then((res) => {
-    })
+    .then((res) => {})
     .finally(() => {
       cb();
     });
@@ -250,16 +300,6 @@ const handleReset = (params: FormData, cb: () => void) => {
 
 <template>
   <div class="container">
-    <lp-search-form
-      label-width="80px"
-      size="default"
-      v-model="form"
-      :fields="fields"
-      @search-click="handleSearch"
-      @reset-click="handleReset"
-    ></lp-search-form>
-
-    <hr />
     <lp-remote-select
       no-data-text="暂无数据"
       multiple
@@ -273,7 +313,26 @@ const handleReset = (params: FormData, cb: () => void) => {
       @fetch-query="getOptions"
       @change="selectChange"
     ></lp-remote-select>
-    value: {{ modelObj.value }}
+    <hr />
+    value: {{ valueList }}
+    <lp-search-form
+      label-width="120px"
+      size="default"
+      v-model="form"
+      :fields="fields"
+      @search-click="handleSearch"
+      @reset-click="handleReset"
+    >
+      <template #cascader="{ item }">
+        <el-cascader
+          v-model="form[item.prop]"
+          :options="item.options"
+          v-bind="item.props"
+          style="width: 100%"
+        ></el-cascader>
+      </template>
+    </lp-search-form>
+    <lp-svg-icon name="github" size="2" />
     <LpTable
       border
       fit

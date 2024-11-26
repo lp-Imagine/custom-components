@@ -1,7 +1,7 @@
 {
   "name": "lp-custom-components",
   "private": false,
-  "version": "0.1.8",
+  "version": "0.1.9",
   "type": "module",
   "author": "lp-imagine",
   "description": "A Vue 3 component library with Element Plus",
@@ -36,6 +36,7 @@
     "@types/webpack-env": "^1.18.5",
     "@vitejs/plugin-vue": "^5.2.0",
     "autoprefixer": "^10.4.20",
+    "fast-glob": "^3.3.2",
     "postcss": "^8.4.49",
     "rollup": "^4.27.3",
     "rollup-plugin-postcss": "^4.0.2",
@@ -45,6 +46,7 @@
     "sass": "^1.81.0",
     "typescript": "^5.6.2",
     "vite": "^5.4.11",
+    "vite-plugin-svg-icons": "^2.0.1",
     "vue-tsc": "^2.1.10"
   }
 }
