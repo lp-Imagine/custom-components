@@ -263,6 +263,8 @@ const form = ref<FormData>({
   cascader: "",
 });
 
+const config = ref({tableHeight: { showHeight: true, marginH: 50 }})
+
 const getList = (): Promise<Person[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -341,6 +343,7 @@ const handleReset = (params: FormData, cb: () => void) => {
       :columns="columns"
       :loading="loading"
       @selection-change="selectionChange"
+      :config="config"
     >
       <template #menuLeftBefore>
         <LpButton type="primary" @click="handleClick">添加{{ num }}</LpButton>

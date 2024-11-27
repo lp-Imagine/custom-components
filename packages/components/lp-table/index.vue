@@ -3,7 +3,7 @@
  * @Author: luopeng
  * @Date: 2024-11-19 15:31:29
  * @LastEditors: Do not edit
- * @LastEditTime: 2024-11-25 10:46:36
+ * @LastEditTime: 2024-11-27 15:06:33
 -->
 <template>
   <div class="lp-table" :style="{ '--alert-height': alertHeight }">
@@ -12,24 +12,24 @@
       <div class="left">
         <!-- 默认新增按钮 -->
         <el-button
-          :size="config.size"
+          :size="computedConfig.size"
           type="primary"
           :icon="Plus"
           @click="emitEvent('insert-click')"
-          v-if="config.showInsert"
-          >{{ config.insertText }}</el-button
+          v-if="computedConfig.showInsert"
+          >{{ computedConfig.insertText }}</el-button
         >
         <!-- 操作栏左侧插槽(在删除按钮前) -->
         <slot name="menuLeftBefore"></slot>
         <!-- 默认删除按钮 -->
         <el-button
-          :size="config.size"
+          :size="computedConfig.size"
           type="danger"
           plain
           :icon="Delete"
           :disabled="!selections.length"
           @click="emitEvent('batch-delete-click', selections)"
-          v-if="config.batchDelete"
+          v-if="computedConfig.batchDelete"
           >批量删除</el-button
         >
         <!-- 操作栏左侧插槽(在删除按钮后) -->
@@ -41,15 +41,17 @@
           type="info"
           show-icon
           :closable="false"
-          v-if="config.batchCheck && selections.length"
+          v-if="computedConfig.batchCheck && selections.length"
         >
         </el-alert>
       </div>
     </div>
     <el-table
+      ref="lpTableRef"
       :data="data"
       v-bind="$attrs"
-      :size="config.size"
+      :size="computedConfig.size"
+      :height="tableHeight"
       v-loading="loading"
       style="width: 100%"
       @selection-change="selectionChange"
@@ -59,7 +61,7 @@
         align="center"
         fixed
         width="72"
-        v-if="config.batchCheck"
+        v-if="computedConfig.batchCheck"
       ></el-table-column>
 
       <el-table-column
@@ -68,7 +70,7 @@
         align="center"
         fixed
         width="72"
-        v-if="config.showIndex"
+        v-if="computedConfig.showIndex"
       ></el-table-column>
       <template v-for="(item, index) in columns">
         <el-table-column
@@ -93,29 +95,29 @@
       </template>
       <el-table-column
         label="操作"
-        :align="config.operateAlign"
+        :align="computedConfig.operateAlign"
         fixed="right"
-        :width="config.operateWidth"
-        v-if="config.showOperate"
+        :width="computedConfig.operateWidth"
+        v-if="computedConfig.showOperate"
       >
         <template v-slot="{ row }">
           <slot name="operateBefore" :row="row"></slot>
           <el-button
-            :size="config.size"
-            :text="config.isText"
+            :size="computedConfig.size"
+            :text="computedConfig.isText"
             type="primary"
             :icon="Edit"
             @click="emitEvent('update-click', row)"
-            v-if="config.showUpdate"
+            v-if="computedConfig.showUpdate"
             >编辑</el-button
           >
           <el-button
-            :size="config.size"
-            :text="config.isText"
+            :size="computedConfig.size"
+            :text="computedConfig.isText"
             type="danger"
             :icon="Delete"
             @click="emitEvent('delete-click', row)"
-            v-if="config.showDelete"
+            v-if="computedConfig.showDelete"
             >删除</el-button
           >
           <slot name="operate" :row="row"></slot>
@@ -123,24 +125,33 @@
       </el-table-column>
     </el-table>
     <LpTablePage
-      v-if="config.showPage"
+      v-if="computedConfig.showPage"
       :totalCount="totalCount"
-      :page-params="config.pageParams"
-      :size="config.size"
-      :background="config.background"
-      :layout="config.layout"
-      :pagerCount="config.pagerCount"
-      :page-sizes="config.pageSizes"
-      :pageKey="config.pageKey"
+      :page-params="computedConfig.pageParams"
+      :size="computedConfig.size"
+      :background="computedConfig.background"
+      :layout="computedConfig.layout"
+      :pagerCount="computedConfig.pagerCount"
+      :page-sizes="computedConfig.pageSizes"
+      :pageKey="computedConfig.pageKey"
       @change="(data) => emitEvent('page-change', data)"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, defineComponent, computed } from "vue";
+import {
+  ref,
+  defineComponent,
+  computed,
+  onMounted,
+  useTemplateRef,
+  onUnmounted,
+} from "vue";
 import { Delete, Edit, Plus } from "@element-plus/icons-vue";
-import LpTablePage from '../lp-table-page/index';
+import LpTablePage from "../lp-table-page/index";
+import useTableHeight from "../../hooks/useTableHeight";
+import { Table } from "element-plus";
 
 interface TableColumn {
   prop: string;
@@ -152,6 +163,12 @@ interface TableColumn {
 interface PageKey {
   numKey: string;
   sizeKey: string;
+}
+
+interface TableHeight {
+  marginH?: number;
+  showHeight: boolean;
+  className?: string;
 }
 
 interface TableConfig {
@@ -177,6 +194,7 @@ interface TableConfig {
   layout?: string;
   pagerCount?: number;
   pageKey?: PageKey;
+  tableHeight?: TableHeight;
 }
 
 defineOptions({
@@ -211,36 +229,69 @@ const props = defineProps({
   },
   config: {
     type: Object as () => TableConfig,
-    default: () => {
-      return {
-        size: "default",
-        isText: false,
-        showInsert: true,
-        insertText: "新增",
-        batchDelete: true,
-        showOperate: true,
-        operateWidth: 220,
-        operateAlign: "center",
-        showUpdate: true,
-        showDelete: true,
-        batchCheck: true,
-        showIndex: true,
-        showPage: true,
-        pageParams: {
-          pageNum: 1,
-          pageSize: 10,
-        },
-        pageSizes: [10, 30, 50, 100],
-        background: true,
-        layout: "total, sizes, prev, pager, next, jumper",
-        pagerCount: 7,
-        pageKey: { numKey: "pageNum", sizeKey: "pageSize" },
-      };
-    },
+    default: () => {},
   },
 });
-
+const baseConfig = ref<TableConfig>({
+  size: "default",
+  isText: false,
+  showInsert: true,
+  insertText: "新增",
+  batchDelete: true,
+  showOperate: true,
+  operateWidth: 220,
+  operateAlign: "center",
+  showUpdate: true,
+  showDelete: true,
+  batchCheck: true,
+  showIndex: true,
+  showPage: true,
+  pageParams: {
+    pageNum: 1,
+    pageSize: 10,
+  },
+  pageSizes: [10, 30, 50, 100],
+  background: true,
+  layout: "total, sizes, prev, pager, next, jumper",
+  pagerCount: 7,
+  pageKey: { numKey: "pageNum", sizeKey: "pageSize" },
+  tableHeight: {
+    marginH: 40,
+    showHeight: false,
+    className: "",
+  },
+});
 const selections = ref<any[]>([]);
+const lpTableRef = ref<null | HTMLElement>(null);
+const tableHeight = ref<number | string>("100%");
+
+const computedConfig = computed(() => {
+  return {...baseConfig.value, ...props.config};
+});
+
+const handleResize = (): void => {
+  const tableH = useTableHeight(lpTableRef.value, {
+    height: computedConfig.value.tableHeight.marginH,
+    className: computedConfig.value.tableHeight.className,
+  });
+  tableHeight.value = tableH.value;
+};
+
+const initTableHeight = (): void => {
+  if (!computedConfig.value.tableHeight.showHeight) return;
+  handleResize();
+  window.addEventListener("resize", handleResize);
+};
+
+onMounted((): void => {
+  initTableHeight();
+});
+
+onUnmounted((): void => {
+  if (computedConfig.value.tableHeight.showHeight) {
+    window.removeEventListener("resize", handleResize);
+  }
+});
 
 // 计算 CSS 变量
 const alertHeight = computed(() => {
